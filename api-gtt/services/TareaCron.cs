@@ -6,8 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using ApiGtt.Models;
 
-namespace ApiGtt.Services
-{
+
     internal class TimedHostedService : IHostedService, IDisposable
     {
         private readonly ILogger _logger;
@@ -32,7 +31,7 @@ namespace ApiGtt.Services
         {
             var optionsBuild = new DbContextOptionsBuilder<ApiGtt.Models.AppDBContext>();
 
-            optionsBuild.UseNpgsql("Host=localhost;Port=5432;Username=postgres;Password=example;Database=ApiGtt;");
+            optionsBuild.UseNpgsql("Host=192.168.99.100;Port=5432;Username=postgres;Password=example;Database=ApiGtt;");
 
 
             using (var context = new ApiGtt.Models.AppDBContext(optionsBuild.Options))
@@ -40,13 +39,16 @@ namespace ApiGtt.Services
                 context.Certificates.Load();
                 foreach (var certifcate in context.Certificates.Local)
                 {
+                    
                     var monthsAdded = 1;
-                    var expireDateCert = certifcate.expireDate.AddMonths(monthsAdded);
-                    var expireDateNow = DateTime.Now;
+                    var expireDateCert = certifcate.expireDate.Date;
+                    var expireDateNow = DateTime.Now.AddMonths(monthsAdded).Date;
                     var noticed = certifcate.notice;
+                    
                     if (expireDateCert == expireDateNow && noticed != true)
                     {
-                        Certificates certs = context.Certificates.Find(certifcate.id);
+                    
+;                       Certificates certs = context.Certificates.Find(certifcate.id);
                         certs.notice = true;
                         context.SaveChanges();
                     }
@@ -70,4 +72,3 @@ namespace ApiGtt.Services
             _timer?.Dispose();
         }
     }
-}

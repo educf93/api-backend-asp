@@ -17,7 +17,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using ApiGtt.Models;
-
 namespace ApiGtt
 {
     public class Startup
@@ -48,7 +47,7 @@ namespace ApiGtt
             services.AddDbContext<AppDBContext>(options =>
             options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            //services.AddHostedService<ApiGtt.Services.TimedHostedService>();
+            services.AddHostedService<TimedHostedService>(); 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

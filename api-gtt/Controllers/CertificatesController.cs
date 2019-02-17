@@ -17,7 +17,7 @@ namespace ApiGtt.Controllers
     public class CertificatesController : Controller
     {
         private readonly AppDBContext _context;
-        private SecureString contraseña;
+        //private SecureString contraseña;
 
         public CertificatesController(AppDBContext context)
         {
@@ -57,7 +57,7 @@ namespace ApiGtt.Controllers
 
                 // Lo cargamos en certificate
 
-                X509Certificate2 certificate = new X509Certificate2(arrayBytes, this.contraseña);
+                X509Certificate2 certificate = new X509Certificate2(arrayBytes, value.password);
 
                 value.entity = certificate.Issuer;
                 value.serialNum = certificate.SerialNumber;
@@ -84,8 +84,13 @@ namespace ApiGtt.Controllers
 
         // PUT api/<controller>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        public ActionResult<Certificates> Put(int id, [FromBody]Certificates value)
         {
+            Certificates cert = this._context.Certificates.Where(
+                  certificate => certificate.id == id).First();
+            cert.ticketed = true;
+            this._context.SaveChanges();
+            return Ok("Actualizado correctamente");
         }
 
         // DELETE api/<controller>/5
@@ -94,19 +99,19 @@ namespace ApiGtt.Controllers
         {
         }
 
-        public byte[] FileToByteArray(string fileName)
-        {
-            byte[] fileContent = null;
+        //public byte[] FileToByteArray(string fileName)
+        //{
+        //    byte[] fileContent = null;
            
-            System.IO.FileStream fs = new System.IO.FileStream(fileName, System.IO.FileMode.Open, System.IO.FileAccess.Read);
-            System.IO.BinaryReader binaryReader = new System.IO.BinaryReader(fs);
+        //    System.IO.FileStream fs = new System.IO.FileStream(fileName, System.IO.FileMode.Open, System.IO.FileAccess.Read);
+        //    System.IO.BinaryReader binaryReader = new System.IO.BinaryReader(fs);
 
-            long byteLength = new System.IO.FileInfo(fileName).Length;
-            fileContent = binaryReader.ReadBytes((Int32)byteLength);
-            fs.Close();
-            fs.Dispose();
-            binaryReader.Close();
-            return fileContent;
-        }
+        //    long byteLength = new System.IO.FileInfo(fileName).Length;
+        //    fileContent = binaryReader.ReadBytes((Int32)byteLength);
+        //    fs.Close();
+        //    fs.Dispose();
+        //    binaryReader.Close();
+        //    return fileContent;
+        //}
     }
 }
